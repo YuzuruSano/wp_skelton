@@ -1,0 +1,2 @@
+# suitosha_base_theme
+WordPress新規テーマ制作用の雛形
