@@ -192,6 +192,9 @@ function my_restrict_manage_posts() {
 		global $type_and_tax;
 
 		$taxonomy = $type_and_tax->get_tax($typenow);
+		$taxonomy_u_array = array_unique($taxonomy);
+		$taxonomy_u_array = array_values($taxonomy_u_array);
+		$taxonomy = $taxonomy_u_array[0];
 
 		if( $typenow != "page" && $typenow != "post" && $taxonomy){
 				$filters = array($typenow);
