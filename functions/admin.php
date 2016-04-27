@@ -44,7 +44,7 @@ add_filter( 'tiny_mce_before_init', 'custom_editor_settingsp' );
 =============================================== */
 //ユーザーレベルを指定して項目削除を実行 66行目をコメントアウトして有効化、user_levelの値で対象となる権限を調整する
 global $current_user;
-get_currentuserinfo();
+wp_get_current_user();
 // if($current_user->user_level == '7'){
 // 	//フックまとめ
 // 	add_action('admin_head', 'admin_css');
