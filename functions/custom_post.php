@@ -147,17 +147,20 @@ function add_custom_tax_columns($column, $post_id) {
 	$pt = get_post_type();
 	$tax = $type_and_tax->get_tax($pt);
 	array_unique($tax);
+	$loopname = array();
 	foreach($tax as $t){
 		if ($column == $t){
-				$cat_data = get_the_terms($post_id,$t);
-				if($cat_data){
-					foreach ($cat_data as $cat) {
+			$cat_data = get_the_terms($post_id,$t);
+			if($cat_data){
+				foreach ($cat_data as $cat) {
+					if(!in_array($cat->name,$loopname)){
 						echo $cat->name;
 					}
+					$loopname[] = $cat->name;
 				}
 			}
+		}
 	}
-
 }
 
 //【おまけ】Wordpres SEOが出力する必要ないカラムを削除 フックするフィルター
@@ -186,7 +189,7 @@ foreach($tax as $d){
 	add_filter( 'manage_edit-'.$d->post_type.'_columns', 'yoast_remove_columns' );
 }
 
-// //カスタムタクソノミーの絞り込み機能を記事一覧ページに追加
+//カスタムタクソノミーの絞り込み機能を記事一覧ページに追加
 function my_restrict_manage_posts() {
 		global $typenow;//現在のカスタムポストタイプ
 		global $type_and_tax;
@@ -202,8 +205,6 @@ function my_restrict_manage_posts() {
 						$terms = get_terms($taxonomy ,  array(
 								 'hide_empty' => 0
 						));
-
-			//フォームの出力
 			echo "<select name='${taxonomy}' id='${taxonomy}' class='postform'>";
 			echo "<option value=''>カテゴリー別</option>";
 			foreach ($terms as $term) {
