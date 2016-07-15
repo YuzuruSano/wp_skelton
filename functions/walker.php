@@ -16,7 +16,7 @@
 // Walker_Category 893行目
 // https://core.trac.wordpress.org/browser/tags/4.0/src//wp-includes/category-template.php#L0
 
-class MyWalker extends Walker_Category {
+//class MyWalker extends Walker_Category {
 	//ここでオーバライド処理
-}
+//}
 ?>

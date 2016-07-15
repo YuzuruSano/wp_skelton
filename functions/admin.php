@@ -61,67 +61,67 @@ wp_get_current_user();
 // 各フック処理こちらから
 
 //管理画面にこちらで指定するjsを読みこませる
-function admin_js() {
-	echo '<script type="text/javascript" src="'.get_stylesheet_directory_uri().'/js/admin.js"></script>';
-}
+// function admin_js() {
+// 	echo '<script type="text/javascript" src="'.get_stylesheet_directory_uri().'/js/admin.js"></script>';
+// }
 
-//管理画面にこちらで指定するcssを読みこませる
-function admin_css() {
-	echo '<link rel="stylesheet" type="text/css" href="'.get_stylesheet_directory_uri().'/functions/admin.css">';
-}
+// //管理画面にこちらで指定するcssを読みこませる
+// function admin_css() {
+// 	echo '<link rel="stylesheet" type="text/css" href="'.get_stylesheet_directory_uri().'/functions/admin.css">';
+// }
 
-//メニューテンプレートを追加 超大胆な変更がほしい時に
-function custom_admin_menu() {
-	echo '</ul></div>';
-	require_once('admin-menu.php');
-};
+// //メニューテンプレートを追加 超大胆な変更がほしい時に
+// function custom_admin_menu() {
+// 	echo '</ul></div>';
+// 	require_once('admin-menu.php');
+// };
 
-//投稿画面からメタボックス類を消す
-function remove_post_metaboxes() {
-	remove_meta_box('commentsdiv', 'post', 'normal'); // コメント設定
-	remove_meta_box('commentstatusdiv', 'post', 'normal'); // コメントステータス設定
-	remove_meta_box('postcustom', 'post', 'normal');//カスタムフィールド
-	remove_meta_box('trackbacksdiv', 'post', 'normal'); // トラックバック設定
-	remove_meta_box('revisionsdiv', 'post', 'normal'); // リビジョン表示
-	remove_meta_box('formatdiv', 'post', 'normal'); // フォーマット設定
-	remove_meta_box('slugdiv', 'post', 'normal'); // スラッグ設定
-	remove_meta_box('authordiv', 'post', 'normal'); // 投稿者
-	remove_meta_box('categorydiv', 'post', 'normal'); // カテゴリー
-	remove_meta_box('tagsdiv-post_tag', 'post', 'normal'); // タグ
-	remove_meta_box('pageparentdiv', 'page', 'side');//属性
-	remove_meta_box('postimagediv', 'post', 'side');//アイキャッチ
-};
-//wordpress SEOのメタボックスを消す
-function remove_seo_metabox() {
-   remove_meta_box( 'wpseo_meta', 'post', 'normal' );
-   remove_meta_box( 'wpseo_meta', 'building', 'normal' );
-   remove_meta_box( 'wpseo_meta', 'cleaning', 'normal' );
-   remove_meta_box( 'wpseo_meta', 'facility', 'normal' );
-   remove_meta_box( 'wpseo_meta', 'page', 'normal' );
-}
-//アイキャッチ項目の削除処理だけ別にする
-function ecd(){
-	remove_meta_box('postimagediv', 'post', 'side');
-};
-//ウェルカムパネル削除
-function hide_welcome_panel() {
-	global $user_id;
-	$user_id = get_current_user_id();
-	update_user_meta( $user_id, 'show_welcome_panel', 0 );
-}
-add_action( 'load-index.php', 'hide_welcome_panel' );
+// //投稿画面からメタボックス類を消す
+// function remove_post_metaboxes() {
+// 	remove_meta_box('commentsdiv', 'post', 'normal'); // コメント設定
+// 	remove_meta_box('commentstatusdiv', 'post', 'normal'); // コメントステータス設定
+// 	remove_meta_box('postcustom', 'post', 'normal');//カスタムフィールド
+// 	remove_meta_box('trackbacksdiv', 'post', 'normal'); // トラックバック設定
+// 	remove_meta_box('revisionsdiv', 'post', 'normal'); // リビジョン表示
+// 	remove_meta_box('formatdiv', 'post', 'normal'); // フォーマット設定
+// 	remove_meta_box('slugdiv', 'post', 'normal'); // スラッグ設定
+// 	remove_meta_box('authordiv', 'post', 'normal'); // 投稿者
+// 	remove_meta_box('categorydiv', 'post', 'normal'); // カテゴリー
+// 	remove_meta_box('tagsdiv-post_tag', 'post', 'normal'); // タグ
+// 	remove_meta_box('pageparentdiv', 'page', 'side');//属性
+// 	remove_meta_box('postimagediv', 'post', 'side');//アイキャッチ
+// };
+// //wordpress SEOのメタボックスを消す
+// function remove_seo_metabox() {
+//    remove_meta_box( 'wpseo_meta', 'post', 'normal' );
+//    remove_meta_box( 'wpseo_meta', 'building', 'normal' );
+//    remove_meta_box( 'wpseo_meta', 'cleaning', 'normal' );
+//    remove_meta_box( 'wpseo_meta', 'facility', 'normal' );
+//    remove_meta_box( 'wpseo_meta', 'page', 'normal' );
+// }
+// //アイキャッチ項目の削除処理だけ別にする
+// function ecd(){
+// 	remove_meta_box('postimagediv', 'post', 'side');
+// };
+// //ウェルカムパネル削除
+// function hide_welcome_panel() {
+// 	global $user_id;
+// 	$user_id = get_current_user_id();
+// 	update_user_meta( $user_id, 'show_welcome_panel', 0 );
+// }
+// add_action( 'load-index.php', 'hide_welcome_panel' );
 
-//管理画面のフッターメッセージを変更
-function custom_admin_footer() {
-	echo '';
-};
+// //管理画面のフッターメッセージを変更
+// function custom_admin_footer() {
+// 	echo '';
+// };
 
-function versionNone() {
-	return '&nbsp;';
-};
+// function versionNone() {
+// 	return '&nbsp;';
+// };
 
-add_filter('admin_footer_text', 'custom_admin_footer');
-add_filter('update_footer', 'versionNone', 20);//core_update_footerの優先順位が強烈なので実行順序を変更
+// add_filter('admin_footer_text', 'custom_admin_footer');
+// add_filter('update_footer', 'versionNone', 20);//core_update_footerの優先順位が強烈なので実行順序を変更
 
 //バージョンアップ情報を消す
 // add_filter('pre_site_transient_update_core', '__return_zero');

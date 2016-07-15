@@ -21,40 +21,32 @@ function wpcf7_text_validation_filter_extend( $result, $tag ) {
 	return $result;
 };
 /*コンタクトフォーム7にカスタムフィールド項目を反映*/
-add_filter('wpcf7_special_mail_tags', 'my_special_mail_tags',10,2);
+// add_filter('wpcf7_special_mail_tags', 'my_special_mail_tags',10,2);
 
-function my_special_mail_tags($output, $name){
-	if ( ! isset( $_POST['_wpcf7_unit_tag'] ) || empty( $_POST['_wpcf7_unit_tag'] ) )
-		return $output;
-	if ( ! preg_match( '/^wpcf7-f(\d+)-p(\d+)-o(\d+)$/', $_POST['_wpcf7_unit_tag'], $matches ) )
-		return $output;
+// function my_special_mail_tags($output, $name){
+// 	if ( ! isset( $_POST['_wpcf7_unit_tag'] ) || empty( $_POST['_wpcf7_unit_tag'] ) )
+// 		return $output;
+// 	if ( ! preg_match( '/^wpcf7-f(\d+)-p(\d+)-o(\d+)$/', $_POST['_wpcf7_unit_tag'], $matches ) )
+// 		return $output;
 
-	$post_id = (int) $matches[2];
-	if ( ! $post = get_post( $post_id ) ){
-		return $output;
-	}
+// 	$post_id = (int) $matches[2];
+// 	if ( ! $post = get_post( $post_id ) ){
+// 		return $output;
+// 	}
 
-	$name = preg_replace( '/^wpcf7\./', '_', $name );
+// 	$name = preg_replace( '/^wpcf7\./', '_', $name );
 
-	//ここでカスタムフィールドのフィールド名ごと分岐を設ける
-	// if ( 'フィールド名' == $name ){
-	//     $output = get_post_meta($post->ID,'parts-id',true);
-	// }
+// 	//ここでカスタムフィールドのフィールド名ごと分岐を設ける
+// 	// if ( 'フィールド名' == $name ){
+// 	//     $output = get_post_meta($post->ID,'parts-id',true);
+// 	// }
 
-	return $output;
-}
+// 	return $output;
+// }
 
 //custom field suiteのループ内容を拾ってループ行のタイトルに反映させる
 function cfs_support_js() {
 	echo '<script type="text/javascript" src="'.get_stylesheet_directory_uri().'/functions/cfs_support.js"></script>';
 }
 add_action('admin_head', 'cfs_support_js');
-
-//custom field suiteにチェックボックス項目を追加
-//cfs_checkbox.phpなどに処理を書いて読み込ませる
-add_filter('cfs_field_types', 'my_custom_field_type');
-function my_custom_field_type($field_types){
-	$field_types['checkbox'] = get_stylesheet_directory().'/functions/cfs_checkbox.php';
-	return $field_types;
-}
 ?>
