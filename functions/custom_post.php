@@ -73,7 +73,8 @@ function create_post_type01() {
 			'label' => 'カスタムタクソノミー_1',
 			'singular_label' => '企業',
 			'public' => true,
-			'show_ui' => true
+			'show_ui' => true,
+			'rewrite' => array('hierarchical' => true)
 		)
 	);
 	 //カスタムタクソノミー、カテゴリタイプ
@@ -86,7 +87,8 @@ function create_post_type01() {
 			'label' => 'カスタムタクソノミー_2',
 			'singular_label' => 'カスタムタクソノミー_2',
 			'public' => true,
-			'show_ui' => true
+			'show_ui' => true,
+			'rewrite' => array('hierarchical' => true)
 		)
 	);
 }

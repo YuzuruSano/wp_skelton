@@ -43,10 +43,3 @@ function wpcf7_text_validation_filter_extend( $result, $tag ) {
 
 // 	return $output;
 // }
-
-//custom field suiteのループ内容を拾ってループ行のタイトルに反映させる
-function cfs_support_js() {
-	echo '<script type="text/javascript" src="'.get_stylesheet_directory_uri().'/functions/cfs_support.js"></script>';
-}
-add_action('admin_head', 'cfs_support_js');
-?>

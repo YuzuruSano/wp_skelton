@@ -19,4 +19,3 @@
 //class MyWalker extends Walker_Category {
 	//ここでオーバライド処理
 //}
-?>
