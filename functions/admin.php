@@ -11,7 +11,7 @@ function login_logo() {
 	echo '<style type="text/css">
 	  body.login { background-color:#fff!important;}
 		.login h1 a {
-			background-image: url('.get_stylesheet_directory_uri().'/images/logo.png)!important;
+			background-image: url('.get_stylesheet_directory_uri().'/assets/build/images/logo.png)!important;
 			width:100px;
 			height:100px;
 			background-size:100px 100px;

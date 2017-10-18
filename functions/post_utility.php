@@ -5,7 +5,7 @@
 
 //投稿内のimgタグの相対パスをテーマディレクトリへのリンクに置換
 function replaceImagePath($arg) {
-$content = str_replace('"images/', '"' . get_stylesheet_directory_uri() . '/images/', $arg);
+$content = str_replace('"images/', '"' . get_stylesheet_directory_uri() . '/assets/build/images/', $arg);
 return $content;
 }
 add_action('the_content', 'replaceImagePath');
