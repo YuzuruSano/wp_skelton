@@ -97,21 +97,22 @@ function catch_that_image_thumb() {
 };
 
 //文字数を決めて本文を出力
-function winexcerpt($length) {
+function winexcerpt($length = 100) {
 	global $post;
 
 	$content_f = get_the_content();
 	$content_f = apply_filters('the_content', $content_f );
+	$contentLength = mb_strlen($content_f);
 
 	//その後加工。
-	if($length > 15){
-	   $content = mb_substr(strip_tags($content_f),0,$length);
-	return $content.'...';
+	if($contentLength > $length){
+		$content = mb_substr(strip_tags($content_f),0,$length);
+		return $content.'...';
 	}
  }
 
 //文字数を決めてタイトルを出力
-function winexcerptT($length) {
+function winexcerptT($length = 100) {
 	global $post;
 	$titleLength = mb_strlen($post->post_title);
 	$content = mb_substr(strip_tags($post->post_title),0,$length);
