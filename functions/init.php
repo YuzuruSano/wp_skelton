@@ -28,7 +28,7 @@ add_image_size( 'photo195-9999', 195, 9999, true );
 /* ===============================================
 css,js読み込み
 =============================================== */
-function suitosha_scripts(){
+function site_scripts(){
 	//stylesheet
 	wp_enqueue_style( 'style', get_stylesheet_directory_uri().'/style.css' );
 
@@ -36,5 +36,20 @@ function suitosha_scripts(){
 	wp_enqueue_script('jquery');
 	//wp_enqueue_script('base', get_stylesheet_directory_uri().'/js/base.js', array('jquery'));
 }
-add_action( 'wp_enqueue_scripts', 'suitosha_scripts' );
-?>
+add_action( 'wp_enqueue_scripts', 'site_scripts' );
+
+/**
+ * log出力
+ */
+if (!function_exists('_log')) {
+    function _log($message)
+    {
+        if (WP_DEBUG === true) {
+            if (is_array($message) || is_object($message)) {
+                error_log(print_r($message, true));
+            } else {
+                error_log($message);
+            }
+        }
+    }
+}
