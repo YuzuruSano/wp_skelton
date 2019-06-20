@@ -43,3 +43,56 @@ function wpcf7_text_validation_filter_extend( $result, $tag ) {
 
 // 	return $output;
 // }
+
+/**
+ * クラス内で定義されたactionを削除する
+ */
+function remove_class_action($tag, $class = '', $method, $priority = null) : bool
+{
+    global $wp_filter;
+    if (isset($wp_filter[$tag])) {
+        $len = strlen($method);
+
+        foreach ($wp_filter[$tag] as $_priority => $actions) {
+            if ($actions) {
+                foreach ($actions as $function_key => $data) {
+                    if ($data) {
+                        if (substr($function_key, -$len) == $method) {
+                            if ($class !== '') {
+                                $_class = '';
+                                if (is_string($data['function'][0])) {
+                                    $_class = $data['function'][0];
+                                } elseif (is_object($data['function'][0])) {
+                                    $_class = get_class($data['function'][0]);
+                                } else {
+                                    return false;
+                                }
+
+                                if ($_class !== '' && $_class == $class) {
+                                    if (is_numeric($priority)) {
+                                        if ($_priority == $priority) {
+                                            //if (isset( $wp_filter->callbacks[$_priority][$function_key])) {}
+                                            return $wp_filter[$tag]->remove_filter($tag, $function_key, $_priority);
+                                        }
+                                    } else {
+                                        return $wp_filter[$tag]->remove_filter($tag, $function_key, $_priority);
+                                    }
+                                }
+                            } else {
+                                if (is_numeric($priority)) {
+                                    if ($_priority == $priority) {
+                                        return $wp_filter[$tag]->remove_filter($tag, $function_key, $_priority);
+                                    }
+                                } else {
+                                    return $wp_filter[$tag]->remove_filter($tag, $function_key, $_priority);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    return false;
+}
