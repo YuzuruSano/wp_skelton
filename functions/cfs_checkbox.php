@@ -61,7 +61,7 @@ class cfs_checkbox extends cfs_field
     <?php
     }
 
-    function input_head()
+    function input_head($field = NULL)
     {
     ?>
         <script>
@@ -150,7 +150,7 @@ class cfs_checkbox extends cfs_field
     <?php
     }
 
-    function format_value_for_api($value, $field)
+    function format_value_for_api($value, $field = NULL)
     {
         $value_array = array();
         $choices = $field->options['choices'];
@@ -164,7 +164,7 @@ class cfs_checkbox extends cfs_field
         return $value_array;
     }
 
-    function prepare_value($value, $field)
+    function prepare_value($value, $field = NULL)
     {
         return $value;
     }
