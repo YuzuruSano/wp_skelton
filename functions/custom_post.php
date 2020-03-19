@@ -193,28 +193,30 @@ foreach($tax as $d){
 
 //カスタムタクソノミーの絞り込み機能を記事一覧ページに追加
 function my_restrict_manage_posts() {
-		global $typenow;//現在のカスタムポストタイプ
-		global $type_and_tax;
+	global $typenow;//現在のカスタムポストタイプ
+	global $type_and_tax;
 
-		$taxonomy = $type_and_tax->get_tax($typenow);
-		$taxonomy_u_array = array_unique($taxonomy);
-		$taxonomy_u_array = array_values($taxonomy_u_array);
+	$taxonomy = $type_and_tax->get_tax($typenow);
+	$taxonomy_u_array = array_unique($taxonomy);
+	$taxonomy_u_array = array_values($taxonomy_u_array);
+	if (is_array($taxonomy_u_array) && 0 < count($taxonomy_u_array)) {
 		$taxonomy = $taxonomy_u_array[0];
 
-		if( $typenow != "page" && $typenow != "post" && $taxonomy){
-				$filters = array($typenow);
-				foreach ($filters as $tax_slug) {
-						$terms = get_terms($taxonomy ,  array(
-								 'hide_empty' => 0
-						));
-			echo "<select name='${taxonomy}' id='${taxonomy}' class='postform'>";
-			echo "<option value=''>カテゴリー別</option>";
-			foreach ($terms as $term) {
-				if($term->count > 0){
-					echo '<option value='. $term->slug, $_GET[$tax_slug] == $term->slug ? ' selected="selected"' : '','>' . $term->name .' (' . $term->count .')</option>';
+		if ($typenow != "page" && $typenow != "post" && $taxonomy) {
+			$filters = array($typenow);
+			foreach ($filters as $tax_slug) {
+				$terms = get_terms($taxonomy, array(
+					'hide_empty' => 0
+				));
+				echo "<select name='${taxonomy}' id='${taxonomy}' class='postform'>";
+				echo "<option value=''>カテゴリー別</option>";
+				foreach ($terms as $term) {
+					if ($term->count > 0) {
+						echo '<option value=' . $term->slug, $_GET[$tax_slug] == $term->slug ? ' selected="selected"' : '', '>' . $term->name . ' (' . $term->count . ')</option>';
+					}
 				}
+				echo "</select>";
 			}
-			echo "</select>";
 		}
 	}
 }
