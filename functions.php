@@ -1,6 +1,6 @@
 <?php
 //画像フォルダへのパス
-define('STATIC_PATH', (DEV_STATIC_PATH) ? DEV_STATIC_PATH : get_stylesheet_directory_uri().'/assets/build/');
+define('STATIC_PATH', defined('DEV_STATIC_PATH') ? DEV_STATIC_PATH : get_stylesheet_directory_uri().'/assets/build/');
 define('IMG_PATH', STATIC_PATH.'images/');
 
 get_template_part( 'functions/init' );//全体的な設定
