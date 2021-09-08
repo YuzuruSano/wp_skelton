@@ -93,126 +93,58 @@ function create_post_type01() {
 	);
 }
 
-
 //カスタム投稿と紐付いたカスタムタクソノミーを取得する処理を用意する。
 class RelatedTAX{
-	public function __construct(){
-		global $wpdb;
-		$query = "SELECT taxonomy,post_type,$wpdb->term_taxonomy.term_taxonomy_id AS tax_id
-		FROM $wpdb->term_taxonomy
-		JOIN $wpdb->term_relationships ON $wpdb->term_taxonomy.term_taxonomy_id = $wpdb->term_relationships.term_taxonomy_id
-		JOIN $wpdb->posts ON $wpdb->posts.ID = $wpdb->term_relationships.object_id
-		GROUP BY tax_id HAVING COUNT(tax_id) > 0";
-		$this->relate_data = $wpdb->get_results($query, OBJECT);
-	}
 
-	public function get_tax($post_type){
-		$taxonomies = array();
+	public function __construct($excludes_category = []){
+		$this->relation = [];
+		$this->pt = get_post_type();
 
-		foreach($this->relate_data as $data){
-			if($data->post_type == $post_type){
-				$taxonomies[$data->tax_id] = $data->taxonomy;
-			}
+		$taxonomy = get_object_taxonomies($this->pt, 'objects');
+		foreach($taxonomy as $tax){
+			if(isset($excludes_category[$this->pt]) && in_array($tax->name, $excludes_category[$this->pt])) continue;
+			$this->relation[$tax->name] = $tax;
 		}
-		return $taxonomies;
+
+		add_filter('manage_edit-'.$this->pt.'_columns', [$this, 'addColumn'], 1);
+		add_action('manage_'.$this->pt.'_posts_custom_column', [$this, 'add_custom_tax_columns'], 10, 2);
+		add_action('restrict_manage_posts', [$this, 'restrict_manage_posts']);
 	}
 
-	public function get_tax_obj(){
-		return $this->relate_data;
+	public function addColumn($columns){
+		$tax = $this->relation;
+		foreach($tax as $t){
+			$columns[$t->name] = $t->labels->singular_name;
+		}
+		return $columns;
 	}
-}
 
-global $type_and_tax;
-$type_and_tax = new RelatedTAX();
-
-/* ===============================================
-#記事一覧ページにカスタムタクソノミー列と絞り込み機能の追加
-=============================================== */
-//カスタムタクソノミー列の追加
-function add_custom_tax_columns_name($columns) {
-	global $post;
-	global $type_and_tax;
-
-	$pt = get_post_type();
-	$tax = $type_and_tax->get_tax($pt);
-	foreach($tax as $t){
-		$taxonomy = get_taxonomy($t);
-		$columns[$t] = $taxonomy->labels->singular_name;
-	}
-	return $columns;
-}
-//タームを出力
-function add_custom_tax_columns($column, $post_id) {
-	global $post;
-	global $type_and_tax;
-
-	$pt = get_post_type();
-	$tax = $type_and_tax->get_tax($pt);
-	array_unique($tax);
-	$loopname = array();
-	foreach($tax as $t){
-		if ($column == $t){
-			$cat_data = get_the_terms($post_id,$t);
-			if($cat_data){
-				foreach ($cat_data as $cat) {
-					if(!in_array($cat->name,$loopname)){
-						echo $cat->name;
-					}
-					$loopname[] = $cat->name;
-				}
+	public function add_custom_tax_columns($columns, $postid){
+		$tax = $this->relation;
+		if(isset($tax[$columns])){
+			$name = $tax[$columns]->name;
+			$terms = get_the_terms($postid, $name);
+			if(is_array($terms) && 0 < count($terms)){
+				$term_names = array_map(function($t){
+				return $t->name;
+				}, $terms);
+				echo implode(',', $term_names);
 			}
 		}
 	}
-}
 
-//【おまけ】Wordpres SEOが出力する必要ないカラムを削除 フックするフィルター
-function yoast_remove_columns( $columns ) {
-	// remove the Yoast SEO columns
-	unset( $columns['wpseo-score'] );
-	unset( $columns['wpseo-title'] );
-	unset( $columns['wpseo-metadesc'] );
-	unset( $columns['wpseo-focuskw'] );
-	return $columns;
-}
-
-//上記3つの処理をまとめてフック
-global $type_and_tax;
-global $post;
-
-$tax = $type_and_tax->get_tax_obj();
-
-foreach($tax as $d){
-	$fil = 'manage_edit-'.$d->post_type.'_columns';
-	$fil02 = 'manage_'.$d->post_type.'_posts_custom_column';
-
-	add_filter($fil, 'add_custom_tax_columns_name');
-	add_action($fil02, 'add_custom_tax_columns', 10, 2);
-
-	add_filter( 'manage_edit-'.$d->post_type.'_columns', 'yoast_remove_columns' );
-}
-
-//カスタムタクソノミーの絞り込み機能を記事一覧ページに追加
-function my_restrict_manage_posts() {
-	global $typenow;//現在のカスタムポストタイプ
-	global $type_and_tax;
-
-	$taxonomy = $type_and_tax->get_tax($typenow);
-	$taxonomy_u_array = array_unique($taxonomy);
-	$taxonomy_u_array = array_values($taxonomy_u_array);
-	if (is_array($taxonomy_u_array) && 0 < count($taxonomy_u_array)) {
-		$taxonomy = $taxonomy_u_array[0];
-
-		if ($typenow != "page" && $typenow != "post" && $taxonomy) {
-			$filters = array($typenow);
-			foreach ($filters as $tax_slug) {
-				$terms = get_terms($taxonomy, array(
+	public function restrict_manage_posts(){
+		$taxonomies = $this->relation;
+		if ($this->pt != "page" && $this->pt != "post" && $taxonomies) {
+			foreach ($taxonomies as $taxonomy) {
+				$terms = get_terms($taxonomy->name, array(
 					'hide_empty' => 0
 				));
-				echo "<select name='${taxonomy}' id='${taxonomy}' class='postform'>";
+				echo "<select name='{$taxonomy->name}' id='{$taxonomy->name}' class='postform'>";
 				echo "<option value=''>カテゴリー別</option>";
 				foreach ($terms as $term) {
 					if ($term->count > 0) {
-						echo '<option value=' . $term->slug, $_GET[$tax_slug] == $term->slug ? ' selected="selected"' : '', '>' . $term->name . ' (' . $term->count . ')</option>';
+						echo '<option value=' . $term->slug, $_GET[$taxonomy->name] == $term->slug ? ' selected="selected"' : '', '>' . $term->name . ' (' . $term->count . ')</option>';
 					}
 				}
 				echo "</select>";
@@ -220,5 +152,10 @@ function my_restrict_manage_posts() {
 		}
 	}
 }
-add_action( 'restrict_manage_posts', 'my_restrict_manage_posts' );
-?>
+
+add_action( 'admin_head', function(){
+	$excludes_category = [
+	 'post' => ['category', 'post_tag', 'post_format']
+	];
+	new RelatedTAX($excludes_category);
+} );
